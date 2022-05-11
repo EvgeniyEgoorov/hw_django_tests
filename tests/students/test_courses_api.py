@@ -28,12 +28,13 @@ def student_factory():
 
 @pytest.mark.django_db
 def test_get_first_course(client, course_factory):
-    course_factory(_quantity=10)
+    courses = course_factory(_quantity=10)
     first_course = Course.objects.first()
-    response = client.get('/courses/')
+    response = client.get('/courses/', {"id": courses[0].id})
     assert response.status_code == 200
-    assert response.data[0]['id'] == first_course.id
-    assert response.data[0]['name'] == first_course.name
+    for item in response.data:
+        assert item['id'] == first_course.id
+        assert item['name'] == first_course.name
 
 
 @pytest.mark.django_db
